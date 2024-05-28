@@ -1,17 +1,17 @@
+import { useMemo, Dispatch } from "react";
 import type { CartItem } from "../types";
-import type { Betta } from "../types";
+import type { CartActions } from "../reducers/cart-reducer";
 
 type HeaderProps = {
     cart: CartItem[],
-    removeFromCart: (id: Betta["id"]) => void,
-    increaseQuantity: (id: CartItem["id"]) => void,
-    decreaseQuantity: (id: CartItem["id"]) => void,
-    clearCart: () => void,
-    isEmpty: boolean,
-    cartTotal: number
+    dispatch: Dispatch<CartActions>
 }
 
-const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart, isEmpty, cartTotal } : HeaderProps)  => {
+const Header = ({ cart, dispatch } : HeaderProps)  => {
+
+    // States derivados
+    const cartTotal = useMemo(() => cart.reduce((total, item) => total + (item.quantity * item.price), 0), [cart]);
+    const isEmpty = useMemo(() => cart.length === 0, [cart]);
 
     return (
 
@@ -61,7 +61,7 @@ const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clea
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-dark"
-                                                                onClick={() => decreaseQuantity(post.id)}
+                                                                onClick={() => dispatch({type: 'decrease-quantity', payload: {id: post.id}})}
                                                             >
                                                                 -
                                                             </button>
@@ -69,7 +69,7 @@ const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clea
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-dark"
-                                                                onClick={() => increaseQuantity(post.id)}
+                                                                onClick={() => dispatch({ type: 'increase-quantity', payload: {id: post.id}})}
                                                             >
                                                                 +
                                                             </button>
@@ -78,7 +78,7 @@ const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clea
                                                             <button
                                                                 className="btn btn-danger"
                                                                 type="button"
-                                                                onClick={() => removeFromCart(post.id)}
+                                                                onClick={() => dispatch( {type: 'remove-from-cart', payload: {id: post.id }})}
                                                             >
                                                                 X
                                                             </button>
@@ -92,7 +92,7 @@ const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clea
                                         <p className="text-end">Total pagar: <span className="fw-bold">{cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span></p>
                                         <button
                                             className="btn btn-dark w-100 mt-3 p-2"
-                                            onClick={clearCart} >
+                                            onClick={() => dispatch({type: 'clear-cart'})} >
                                             Vaciar Carrito
                                         </button>
                                     </>
@@ -103,7 +103,6 @@ const Header = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, clea
                 </div>
             </div>
         </header>
-
     )
 }
 

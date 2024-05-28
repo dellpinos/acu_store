@@ -1,51 +1,35 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import Header from "./components/Header";
 import Betta from "./components/Betta";
-import { useCart } from "./hooks/useCart";
 import { initialState, cartReducer } from "./reducers/cart-reducer";
 
 
 function App() {
 
-    const { 
-        data,
-        cart,
-        addToCart,
-        removeFromCart,
-        increaseQuantity,
-        decreaseQuantity,
-        clearCart,
-        isEmpty,
-        cartTotal
-    } = useCart();
     const [state, dispatch] = useReducer(cartReducer, initialState);
 
-    console.log(state);
-
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(state.cart));
+    }, [state.cart]);
 
     return (
         <>
 
             <Header 
-                cart = {cart}
-                removeFromCart= {removeFromCart}
-                increaseQuantity = {increaseQuantity}
-                decreaseQuantity = {decreaseQuantity}
-                clearCart = {clearCart}
-                isEmpty = {isEmpty}
-                cartTotal = {cartTotal}
+                cart = {state.cart}
+                dispatch = {dispatch}
             />
 
             <main className="container-xl mt-5">
                 <h2 className="text-center">Nuestra Colección</h2>
                 <div className="row mt-5">
 
-                {data.map( (post) => (
+                {state.data.map( (post) => (
                     
                     <Betta 
                         key={post.id}
                         post={post}
-                        addToCart={addToCart}
+                        dispatch={dispatch}
                     />
                 ))}
 

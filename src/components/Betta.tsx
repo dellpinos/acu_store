@@ -1,11 +1,13 @@
-import type { Betta } from '../types'
+import type { Betta } from '../types';
+import { Dispatch } from 'react';
+import type { CartActions } from '../reducers/cart-reducer';
 
 type BettaProps = {
     post: Betta,
-    addToCart : (item: Betta) => void
+    dispatch: Dispatch<CartActions>
 }
 
-const Betta = ({post, addToCart} : BettaProps) => {
+const Betta = ({post, dispatch} : BettaProps) => {
 
     const { image, name, description, price } = post
 
@@ -24,7 +26,7 @@ const Betta = ({post, addToCart} : BettaProps) => {
             <button
                 type="button"
                 className="btn btn-dark w-100"
-                onClick={() => addToCart(post)}
+                onClick={() => dispatch({type: 'add-to-cart', payload: {item: post }})}
             >Agregar al Carrito</button>
 
         </div>
